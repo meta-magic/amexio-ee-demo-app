@@ -30,13 +30,13 @@ script:
   - ng build
 after_success: 
   - codecov
-  - git clone https://github.com/meta-magic/amexio-ce-demo.git -b master
-  - cd amexio-ce-demo/
+  - git clone https://github.com/meta-magic/amexio-ee-demo-app.git -b master
+  - cd amexio-ee-demo-app/
   - rm -rf docs/*
   - cp -rf ../docs/* docs/
   - cp -rf CNAME docs/
   - git add docs
   - git commit -m "[skip travis]  docs-updated"
-  - git push  "https://deepali-arvind:${GITHUB_TOKEN}@github.com/meta-magic/amexio-ce-demo.git" HEAD:master
+  - git push  "https://deepali-arvind:${GITHUB_TOKEN}@github.com/meta-magic/amexio-ee-demo-app.git" HEAD:master
 cache:
   yarn: true
