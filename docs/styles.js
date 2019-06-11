@@ -662,10 +662,10 @@ if(false) {}
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/travis/build/meta-magic/amexio-ce-demo/node_modules/amexio-chart-d3/lib/styles/amexio-chart-d3-components.css */"./node_modules/amexio-chart-d3/lib/styles/amexio-chart-d3-components.css");
-__webpack_require__(/*! /home/travis/build/meta-magic/amexio-ce-demo/node_modules/font-awesome/scss/font-awesome.scss */"./node_modules/font-awesome/scss/font-awesome.scss");
-__webpack_require__(/*! /home/travis/build/meta-magic/amexio-ce-demo/node_modules/amexio-ng-extensions/styles/mda/at-md-z-flag-usa.scss */"./node_modules/amexio-ng-extensions/styles/mda/at-md-z-flag-usa.scss");
-module.exports = __webpack_require__(/*! /home/travis/build/meta-magic/amexio-ce-demo/src/styles.css */"./src/styles.css");
+__webpack_require__(/*! /home/travis/build/meta-magic/amexio-ee-demo-app/node_modules/amexio-chart-d3/lib/styles/amexio-chart-d3-components.css */"./node_modules/amexio-chart-d3/lib/styles/amexio-chart-d3-components.css");
+__webpack_require__(/*! /home/travis/build/meta-magic/amexio-ee-demo-app/node_modules/font-awesome/scss/font-awesome.scss */"./node_modules/font-awesome/scss/font-awesome.scss");
+__webpack_require__(/*! /home/travis/build/meta-magic/amexio-ee-demo-app/node_modules/amexio-ng-extensions/styles/mda/at-md-z-flag-usa.scss */"./node_modules/amexio-ng-extensions/styles/mda/at-md-z-flag-usa.scss");
+module.exports = __webpack_require__(/*! /home/travis/build/meta-magic/amexio-ee-demo-app/src/styles.css */"./src/styles.css");
 
 
 /***/ })

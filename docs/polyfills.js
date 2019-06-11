@@ -5776,7 +5776,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/travis/build/meta-magic/amexio-ce-demo/src/polyfills.ts */"./src/polyfills.ts");
+module.exports = __webpack_require__(/*! /home/travis/build/meta-magic/amexio-ee-demo-app/src/polyfills.ts */"./src/polyfills.ts");
 
 
 /***/ })
