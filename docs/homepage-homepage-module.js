@@ -15031,9 +15031,9 @@ Object(_define__WEBPACK_IMPORTED_MODULE_0__["default"])(Rgb, rgb, Object(_define
     return this;
   },
   displayable: function() {
-    return (0 <= this.r && this.r <= 255)
-        && (0 <= this.g && this.g <= 255)
-        && (0 <= this.b && this.b <= 255)
+    return (-0.5 <= this.r && this.r < 255.5)
+        && (-0.5 <= this.g && this.g < 255.5)
+        && (-0.5 <= this.b && this.b < 255.5)
         && (0 <= this.opacity && this.opacity <= 1);
   },
   hex: function() {
@@ -15298,7 +15298,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// https://beta.observablehq.com/@mbostock/lab-and-rgb
+// https://observablehq.com/@mbostock/lab-and-rgb
 var K = 18,
     Xn = 0.96422,
     Yn = 1,
@@ -15310,11 +15310,7 @@ var K = 18,
 
 function labConvert(o) {
   if (o instanceof Lab) return new Lab(o.l, o.a, o.b, o.opacity);
-  if (o instanceof Hcl) {
-    if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
-    var h = o.h * _math__WEBPACK_IMPORTED_MODULE_2__["deg2rad"];
-    return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
-  }
+  if (o instanceof Hcl) return hcl2lab(o);
   if (!(o instanceof _color__WEBPACK_IMPORTED_MODULE_1__["Rgb"])) o = Object(_color__WEBPACK_IMPORTED_MODULE_1__["rgbConvert"])(o);
   var r = rgb2lrgb(o.r),
       g = rgb2lrgb(o.g),
@@ -15384,7 +15380,7 @@ function rgb2lrgb(x) {
 function hclConvert(o) {
   if (o instanceof Hcl) return new Hcl(o.h, o.c, o.l, o.opacity);
   if (!(o instanceof Lab)) o = labConvert(o);
-  if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0, o.l, o.opacity);
+  if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
   var h = Math.atan2(o.b, o.a) * _math__WEBPACK_IMPORTED_MODULE_2__["rad2deg"];
   return new Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
 }
@@ -15404,6 +15400,12 @@ function Hcl(h, c, l, opacity) {
   this.opacity = +opacity;
 }
 
+function hcl2lab(o) {
+  if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
+  var h = o.h * _math__WEBPACK_IMPORTED_MODULE_2__["deg2rad"];
+  return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
+}
+
 Object(_define__WEBPACK_IMPORTED_MODULE_0__["default"])(Hcl, hcl, Object(_define__WEBPACK_IMPORTED_MODULE_0__["extend"])(_color__WEBPACK_IMPORTED_MODULE_1__["Color"], {
   brighter: function(k) {
     return new Hcl(this.h, this.c, this.l + K * (k == null ? 1 : k), this.opacity);
@@ -15412,7 +15414,7 @@ Object(_define__WEBPACK_IMPORTED_MODULE_0__["default"])(Hcl, hcl, Object(_define
     return new Hcl(this.h, this.c, this.l - K * (k == null ? 1 : k), this.opacity);
   },
   rgb: function() {
-    return labConvert(this).rgb();
+    return hcl2lab(this).rgb();
   }
 }));
 
@@ -19081,6 +19083,9 @@ var boundsStream = {
     else if (deltaSum > _math__WEBPACK_IMPORTED_MODULE_3__["epsilon"]) phi1 = 90;
     else if (deltaSum < -_math__WEBPACK_IMPORTED_MODULE_3__["epsilon"]) phi0 = -90;
     range[0] = lambda0, range[1] = lambda1;
+  },
+  sphere: function() {
+    lambda0 = -(lambda1 = 180), phi0 = -(phi1 = 90);
   }
 };
 
@@ -20545,10 +20550,23 @@ function containsPoint(coordinates, point) {
 }
 
 function containsLine(coordinates, point) {
-  var ab = Object(_distance__WEBPACK_IMPORTED_MODULE_1__["default"])(coordinates[0], coordinates[1]),
-      ao = Object(_distance__WEBPACK_IMPORTED_MODULE_1__["default"])(coordinates[0], point),
-      ob = Object(_distance__WEBPACK_IMPORTED_MODULE_1__["default"])(point, coordinates[1]);
-  return ao + ob <= ab + _math__WEBPACK_IMPORTED_MODULE_2__["epsilon"];
+  var ao, bo, ab;
+  for (var i = 0, n = coordinates.length; i < n; i++) {
+    bo = Object(_distance__WEBPACK_IMPORTED_MODULE_1__["default"])(coordinates[i], point);
+    if (bo === 0) return true;
+    if (i > 0) {
+      ab = Object(_distance__WEBPACK_IMPORTED_MODULE_1__["default"])(coordinates[i], coordinates[i - 1]);
+      if (
+        ab > 0 &&
+        ao <= ab &&
+        bo <= ab &&
+        (ao + bo - ab) * (1 - Math.pow((ao - bo) / ab, 2)) < _math__WEBPACK_IMPORTED_MODULE_2__["epsilon2"] * ab
+      )
+        return true;
+    }
+    ao = bo;
+  }
+  return false;
 }
 
 function containsPolygon(coordinates, point) {
@@ -21656,8 +21674,15 @@ __webpack_require__.r(__webpack_exports__);
 
 var sum = Object(_adder__WEBPACK_IMPORTED_MODULE_0__["default"])();
 
+function longitude(point) {
+  if (Object(_math__WEBPACK_IMPORTED_MODULE_2__["abs"])(point[0]) <= _math__WEBPACK_IMPORTED_MODULE_2__["pi"])
+    return point[0];
+  else
+    return Object(_math__WEBPACK_IMPORTED_MODULE_2__["sign"])(point[0]) * ((Object(_math__WEBPACK_IMPORTED_MODULE_2__["abs"])(point[0]) + _math__WEBPACK_IMPORTED_MODULE_2__["pi"]) % _math__WEBPACK_IMPORTED_MODULE_2__["tau"] - _math__WEBPACK_IMPORTED_MODULE_2__["pi"]);
+}
+
 /* harmony default export */ __webpack_exports__["default"] = (function(polygon, point) {
-  var lambda = point[0],
+  var lambda = longitude(point),
       phi = point[1],
       sinPhi = Object(_math__WEBPACK_IMPORTED_MODULE_2__["sin"])(phi),
       normal = [Object(_math__WEBPACK_IMPORTED_MODULE_2__["sin"])(lambda), -Object(_math__WEBPACK_IMPORTED_MODULE_2__["cos"])(lambda), 0],
@@ -21674,14 +21699,14 @@ var sum = Object(_adder__WEBPACK_IMPORTED_MODULE_0__["default"])();
     var ring,
         m,
         point0 = ring[m - 1],
-        lambda0 = point0[0],
+        lambda0 = longitude(point0),
         phi0 = point0[1] / 2 + _math__WEBPACK_IMPORTED_MODULE_2__["quarterPi"],
         sinPhi0 = Object(_math__WEBPACK_IMPORTED_MODULE_2__["sin"])(phi0),
         cosPhi0 = Object(_math__WEBPACK_IMPORTED_MODULE_2__["cos"])(phi0);
 
     for (var j = 0; j < m; ++j, lambda0 = lambda1, sinPhi0 = sinPhi1, cosPhi0 = cosPhi1, point0 = point1) {
       var point1 = ring[j],
-          lambda1 = point1[0],
+          lambda1 = longitude(point1),
           phi1 = point1[1] / 2 + _math__WEBPACK_IMPORTED_MODULE_2__["quarterPi"],
           sinPhi1 = Object(_math__WEBPACK_IMPORTED_MODULE_2__["sin"])(phi1),
           cosPhi1 = Object(_math__WEBPACK_IMPORTED_MODULE_2__["cos"])(phi1),
@@ -39982,7 +40007,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "devDependencies", function() { return devDependencies; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dependencies", function() { return dependencies; });
 var name = "d3";
-var version = "5.9.2";
+var version = "5.9.7";
 var description = "Data-Driven Documents";
 var keywords = ["dom","visualization","svg","animation","canvas"];
 var homepage = "https://d3js.org";
@@ -41593,7 +41618,7 @@ var DashboardThreeComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n.image-style{\n    display: -webkit-flex;\n    display: flex;\n    -webkit-flex-direction: row;\n            flex-direction: row;\n}"
+module.exports = "\n.image-style{\n    display: flex;\n    flex-direction: row;\n}"
 
 /***/ }),
 
