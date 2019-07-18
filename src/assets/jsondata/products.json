@@ -2,21 +2,21 @@
     {
       "productId": 1,
       "category": "2",
-      "name": "Apple Mobile",
+      "name": "Apple Mobile From v1.1",
       "description": " Iphone 10 32 GB",
       "price": 90000
     },
     {
       "productId": 2,
       "category": "2",
-      "name": "Samsung Mobile",
+      "name": "Samsung Mobile From v1.1",
       "description": " Samsung 10 32 GB",
       "price": 4000
     },
     {
       "productId": 3,
       "category": "2",
-      "name": "Song Mobile",
+      "name": "Song Mobile From v1.1",
       "description": " Song 10 32 GB",
       "price": 10000
     }
