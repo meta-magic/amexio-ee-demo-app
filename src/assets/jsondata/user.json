@@ -1,4 +1,6 @@
-[
+{
+  "enviorment":"DEV_ENV"
+  "data":[
          
         {
           "name": "Araf Karsh Hamid",
@@ -7,7 +9,7 @@
           "email" : "XYZ@metamagic.in"
         },
         {
-          "name": "ketan Gote",
+          "name": "Ketan Gote",
           "name_official": "Ketan Gote",
           "profile": "ketan.jpg",
           "email" : "XYZ@metamagic.in"
@@ -45,3 +47,5 @@
           "email" : "XYZ@metamagic.in"
         }
       ]
+
+}
